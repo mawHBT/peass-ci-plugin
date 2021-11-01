@@ -67,10 +67,15 @@ public class LocalPeassProcessManager {
       RTSResult result = workspace.act(rts);
       copyFromRemote();
       if (result != null) {
-         peassConfig.getMeasurementConfig().getExecutionConfig().setVersionOld(result.getVersionOld());
+         listener.getLogger().println("Setting predecessor version, obtained by RTS");
+         String versionOld = result.getVersionOld();
+         peassConfig.getMeasurementConfig().getExecutionConfig().setVersionOld(versionOld);
       }
       if (peassConfig.isDisplayRTSLogs()) {
+         listener.getLogger().println("Creating RTS logs");
          logActionCreator.createRTSActions();
+      }else {
+         listener.getLogger().println("Not creating RTS logs because disabled");
       }
       if (result != null) {
          return result.getTests();

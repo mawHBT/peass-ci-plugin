@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.dagere.peass.ci.PeassProcessConfiguration;
 import de.dagere.peass.ci.helper.VisualizationFolderManager;
 import de.dagere.peass.ci.logs.measurement.MeasurementActionCreator;
@@ -13,6 +16,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import hudson.model.Run;
 
 public class LogActionCreator {
+   
+   private static final Logger LOG = LogManager.getLogger(LogActionCreator.class);
    
    private final PeassProcessConfiguration peassConfig;
    private final Run<?, ?> run;
@@ -27,6 +32,7 @@ public class LogActionCreator {
    }
    
    public void createRTSActions() throws IOException {
+      LOG.debug("Creating RTS log actions");
       RTSLogFileReader rtsReader = new RTSLogFileReader(visualizationFolders, peassConfig.getMeasurementConfig());
       RTSActionCreator rtsActionCreator = new RTSActionCreator(rtsReader, run, peassConfig.getMeasurementConfig());
       rtsActionCreator.createRTSActions();
