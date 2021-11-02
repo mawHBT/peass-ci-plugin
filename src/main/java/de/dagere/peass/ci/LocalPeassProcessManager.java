@@ -73,8 +73,14 @@ public class LocalPeassProcessManager {
       }
       if (peassConfig.isDisplayRTSLogs()) {
          listener.getLogger().println("Creating RTS logs");
-         logActionCreator.createRTSActions();
-      }else {
+         try {
+            logActionCreator.createRTSActions();
+         } catch (Throwable t) {
+            listener.getLogger().println("Log creation threw: " + t.getClass());
+            listener.getLogger().println(t.getStackTrace());
+         }
+         listener.getLogger().println("Log creation finished");
+      } else {
          listener.getLogger().println("Not creating RTS logs because disabled");
       }
       if (result != null) {
@@ -107,7 +113,7 @@ public class LocalPeassProcessManager {
 
    public void copyFromRemote() throws IOException, InterruptedException {
       String remotePeassPath = ContinuousFolderUtil.getLocalFolder(new File(workspace.getRemote())).getPath();
-      listener.getLogger().println(Arrays.toString( new RuntimeException().getStackTrace()));
+      listener.getLogger().println(Arrays.toString(new RuntimeException().getStackTrace()));
       listener.getLogger().println("Remote Peass path: " + remotePeassPath);
       FilePath remotePeassFolder = new FilePath(workspace.getChannel(), remotePeassPath);
       DirScanner.Glob dirScanner = new DirScanner.Glob("**/*,**/.git/**", "", false);
@@ -133,9 +139,9 @@ public class LocalPeassProcessManager {
       TrendFileUtil.persistTrend(run, localWorkspace, statistics);
 
       Map<String, TestcaseStatistic> noWarmupStatistics = createPureMeasurementVisualization(run, dataFolder, measurements);
-      
+
       Changes versionChanges = changes.getVersion(peassConfig.getMeasurementConfig().getExecutionConfig().getVersion());
-      
+
       final MeasureVersionAction action = new MeasureVersionAction(peassConfig.getMeasurementConfig(), versionChanges, statistics,
             noWarmupStatistics, measurements, histogramReader.getUpdatedConfigurations());
       run.addAction(action);
@@ -155,7 +161,8 @@ public class LocalPeassProcessManager {
 
    private Map<String, TestcaseStatistic> createPureMeasurementVisualization(final Run<?, ?> run, final File dataFolder, final Map<String, HistogramValues> measurements) {
       VisualizationFolderManager visualizationFolders = new VisualizationFolderManager(localWorkspace, run);
-      DefaultMeasurementVisualizer visualizer = new DefaultMeasurementVisualizer(dataFolder, peassConfig.getMeasurementConfig().getExecutionConfig().getVersion(), run, visualizationFolders,
+      DefaultMeasurementVisualizer visualizer = new DefaultMeasurementVisualizer(dataFolder, peassConfig.getMeasurementConfig().getExecutionConfig().getVersion(), run,
+            visualizationFolders,
             measurements.keySet());
       visualizer.visualizeMeasurements();
       Map<String, TestcaseStatistic> noWarmupStatistics = visualizer.getNoWarmupStatistics();

@@ -39,12 +39,19 @@ public class JenkinsLogRedirector implements AutoCloseable {
 
    @Override
    public void close() {
+      System.out.println("Redirect System.out to original stream");
+      
       System.setOut(outOriginal);
       System.setErr(errOriginal);
 
+      System.out.println("System.out redirection finished");
+      
       outputStreamAppender.stop();
       loggerContext.getConfiguration().getAppenders().remove(outputStreamAppender.getName());
       loggerContext.getRootLogger().removeAppender(outputStreamAppender);
+      loggerContext.updateLoggers();
+      
+      System.out.println("log4j redirection finished");
    }
 
 }

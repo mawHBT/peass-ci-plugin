@@ -32,6 +32,7 @@ public class LogActionCreator {
    }
    
    public void createRTSActions() throws IOException {
+      System.out.println("Creating RTS log actions");
       LOG.debug("Creating RTS log actions");
       RTSLogFileReader rtsReader = new RTSLogFileReader(visualizationFolders, peassConfig.getMeasurementConfig());
       RTSActionCreator rtsActionCreator = new RTSActionCreator(rtsReader, run, peassConfig.getMeasurementConfig());
