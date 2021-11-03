@@ -70,6 +70,9 @@ public class LocalPeassProcessManager {
          listener.getLogger().println("Setting predecessor version, obtained by RTS");
          String versionOld = result.getVersionOld();
          peassConfig.getMeasurementConfig().getExecutionConfig().setVersionOld(versionOld);
+      } else {
+         String versionOld = rts.getVersionOld();
+         peassConfig.getMeasurementConfig().getExecutionConfig().setVersionOld(versionOld);
       }
       if (peassConfig.isDisplayRTSLogs()) {
          listener.getLogger().println("Creating RTS logs");
