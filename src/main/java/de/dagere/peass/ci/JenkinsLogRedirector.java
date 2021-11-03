@@ -3,6 +3,7 @@ package de.dagere.peass.ci;
 import java.io.PrintStream;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.OutputStreamAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
@@ -10,6 +11,8 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import hudson.model.TaskListener;
 
 public class JenkinsLogRedirector implements AutoCloseable {
+   
+   private static final Logger LOG = LogManager.getLogger(JenkinsLogRedirector.class);
    
    private final LoggerContext loggerContext = (LoggerContext) LogManager.getContext(JenkinsLogRedirector.class.getClassLoader(), false);
 
@@ -45,6 +48,7 @@ public class JenkinsLogRedirector implements AutoCloseable {
       System.setErr(errOriginal);
 
       System.out.println("System.out redirection finished");
+      LOG.debug("Before");
       
       outputStreamAppender.stop();
       loggerContext.getConfiguration().getAppenders().remove(outputStreamAppender.getName());
@@ -52,6 +56,7 @@ public class JenkinsLogRedirector implements AutoCloseable {
       loggerContext.updateLoggers();
       
       System.out.println("log4j redirection finished");
+      LOG.debug("After");
    }
 
 }
