@@ -15,7 +15,7 @@ public class UnitConverter {
    final static String MILLISECONDS = "ms";
    final static String SECONDS = "s";
 
-   public static int determineFactorByMean(final double[] timeValues) {
+   public static int getFactorByMean(final double[] timeValues) {
       int count = 0;
       double mean = new DescriptiveStatistics(timeValues).getMean();
 
@@ -24,10 +24,10 @@ public class UnitConverter {
          count++;
       }
 
-      return getFactor(count);
+      return getFactorByCount(count);
    }
 
-   private static int getFactor(int count) {
+   private static int getFactorByCount(int count) {
       switch (count) {
       case 0:
          return 1;
@@ -40,6 +40,22 @@ public class UnitConverter {
       default:
          // this should not happen!
          return 0;
+      }
+   }
+
+   public static String getUnitByFactor(final int factor) {
+      switch (factor) {
+      case 1:
+         return "ns";
+      case NANOSECONDS_TO_MICROSECONDS:
+         return "\u00B5s";
+      case NANOSECONDS_TO_MILLISECONDS:
+         return "ms";
+      case NANOSECONDS_TO_SECONDS:
+         return "s";
+      default:
+         // this should not happen!
+         return "unknown factor provided!";
       }
    }
 
