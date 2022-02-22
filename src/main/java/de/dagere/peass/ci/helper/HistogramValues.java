@@ -9,28 +9,19 @@ import de.dagere.peass.visualization.KoPeMeTreeConverter;
 
 public class HistogramValues {
    
-   private static final String NANOSECONDS = "ns";
-   private static final String MICROSECONDS = "\u00B5s";
-   
    private final double[] valuesCurrent;
    private final double[] valuesBefore;
-
-   private String unit;
+   private final String unit;
 
    /**
     * Creates histogram values, assuming parameters are in nanoseconds
     */
    public HistogramValues(final double[] valuesCurrent, final double[] valuesBefore, final MeasurementConfig currentConfig) {
-      double mean = new DescriptiveStatistics(valuesCurrent).getMean();
-      int factor;
-      if (mean < 1000) {
-         unit = NANOSECONDS;
-         factor = 1;
-      } else {
-         unit = MICROSECONDS;
-         factor = KoPeMeTreeConverter.NANO_TO_MICRO;
-      }
+      final double mean = new DescriptiveStatistics(valuesCurrent).getMean();
+      final int factor = UnitConverter.getFactorByMean(mean);
+      unit = UnitConverter.getUnitByFactor(factor);
       System.out.println("Unit: " + unit);
+
       this.valuesCurrent = Arrays.stream(valuesCurrent).map(value -> value / currentConfig.getRepetitions() / factor).toArray();
       this.valuesBefore = Arrays.stream(valuesBefore).map(value -> value / currentConfig.getRepetitions() / factor).toArray();
    }
