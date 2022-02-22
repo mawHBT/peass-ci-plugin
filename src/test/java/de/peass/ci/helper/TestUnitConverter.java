@@ -7,17 +7,17 @@ import de.dagere.peass.ci.helper.UnitConverter;
 
 public class TestUnitConverter {
 
-   final double[] nanoSecondValues = new double[] { 123 };
-   final double[] mikroSecondValues = new double[] { 1234 };
-   final double[] milliSecondValues = new double[] { 1234567 };
-   final double[] secondValues = new double[] { 12345678E6 };
+   final double nanoSecondMean = 123;
+   final double mikroSecondMean = 1234;
+   final double milliSecondMean = 1234567;
+   final double secondMean = 12345678E6;
 
    @Test
    public void testGetFactorByMean() {
-      Assert.assertEquals(1, UnitConverter.getFactorByMean(nanoSecondValues));
-      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_MICROSECONDS, UnitConverter.getFactorByMean(mikroSecondValues));
-      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_MILLISECONDS, UnitConverter.getFactorByMean(milliSecondValues));
-      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_SECONDS, UnitConverter.getFactorByMean(secondValues));
+      Assert.assertEquals(1, UnitConverter.getFactorByMean(nanoSecondMean));
+      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_MICROSECONDS, UnitConverter.getFactorByMean(mikroSecondMean));
+      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_MILLISECONDS, UnitConverter.getFactorByMean(milliSecondMean));
+      Assert.assertEquals(UnitConverter.NANOSECONDS_TO_SECONDS, UnitConverter.getFactorByMean(secondMean));
    }
 
    @Test

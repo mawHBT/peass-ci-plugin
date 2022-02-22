@@ -13,9 +13,8 @@ public class UnitConverter {
    public static final String MILLISECONDS = "ms";
    public static final String SECONDS = "s";
 
-   public static int getFactorByMean(final double[] timeValues) {
+   public static int getFactorByMean(double mean) {
       int count = 0;
-      double mean = new DescriptiveStatistics(timeValues).getMean();
 
       while (count < 3 && mean >= 1000) {
          mean = mean / 1000;

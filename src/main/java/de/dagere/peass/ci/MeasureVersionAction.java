@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.dagere.peass.ci.helper.UnitConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -127,5 +128,13 @@ public class MeasureVersionAction extends VisibleAction {
 
    public double round(final double value) {
       return Math.round(value * 100) / 100d;
+   }
+
+   public int getFactorByMean(final double mean) {
+      return UnitConverter.getFactorByMean(mean);
+   }
+
+   public String getUnitByFactor(final int factor) {
+      return UnitConverter.getUnitByFactor(factor);
    }
 }
