@@ -1,181 +1,207 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:x="jelly:xml">
-  <style>
-    .changes-container {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 30px;
-    }
+    <style>
+        .changes-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+        }
 
-    .configuration-table {
-      margin-bottom: 30px;
-    }
-  </style>
-  <l:layout title="Performance Measurement">
-    <l:side-panel>
-      <st:include page="sidepanel.jelly" it="${it.run}" optional="true" />
-    </l:side-panel>
-    <l:main-panel>
-      <st:include page="/style.jelly" optional="false" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
-      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-      <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-      <script> jq$ = jQuery.noConflict();</script>
+        .configuration-table {
+        margin-bottom: 30px;
+        }
+    </style>
+    <l:layout title="Performance Measurement">
+        <l:side-panel>
+            <st:include page="sidepanel.jelly" it="${it.run}" optional="true"/>
+        </l:side-panel>
+        <l:main-panel>
+            <st:include page="/style.jelly" optional="false"/>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"/>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+            <script>
+              jq$ = jQuery.noConflict();
+            </script>
 
-      <h1>
-        ${%resultsTitle}
-        <a href='#' onClick='jq$( "#dialogGeneral" ).dialog( "open" );'>
-          <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
-        </a>
-        <div id="dialogGeneral" title="${%helpValues}">${%repetitionHint}</div>
-        <script>
-          jq$("#dialogGeneral").dialog({ autoOpen: false });
-        </script>
-      </h1>
+            <h1>
+                ${%resultsTitle}
+                <a href='#' onClick='jq$( "#dialogGeneral" ).dialog( "open" );'>
+                    <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
+                </a>
+                <div id="dialogGeneral" title="${%helpValues}">
+                  ${%repetitionHint}
+                </div>
+                <script>
+                    jq$("#dialogGeneral").dialog({autoOpen: false});
+                </script>
+            </h1>
 
-      <a href="#" onClick="jq$('#configuration').toggle();">${%configuration} &#9660;</a>
-      <div id="configuration" style="display: none">
-        <div><p>${%configurationText}</p></div>
-        <table class="data-table configuration-table">
-          <tr>
-            <td>VMs</td>
-            <td> ${it.config.vms} </td>
-          </tr>
-          <tr>
-            <td>${%iterations}</td>
-            <td>${it.config.iterations}</td>
-          </tr>
-          <tr>
-            <td>${%warmup}</td>
-            <td>${it.config.warmup}</td>
-          </tr>
-          <tr>
-            <td>${%repetitions}</td>
-            <td>${it.config.repetitions}</td>
-          </tr>
-        </table>
-      </div>
-
-      <j:if test="${it.hasUpdatedConfigurations()}">
-        ${AMP}
-        <a href='#' onClick='jq$( "#dialogUpdates" ).dialog( "open" );' style="font-size:24px; color: red;">
-          <i class="fa fa-exclamation-triangle" title="Configuration has changed"></i>
-        </a>
-        <div id="dialogUpdates" title="${%updatedConfigurationTitle}">${%changedConfigurationHint}</div>
-        <script>
-          jq$( "#dialogUpdates" ).dialog({ autoOpen: false });
-        </script>
-      </j:if>
-
-      <h2>
-        ${%changes}
-        <a href='#' onClick='jq$( "#dialogChanges" ).dialog( "open" );'>
-          <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
-        </a>
-      </h2>
-      <div id="dialogChanges" title="Changes">
-        This section contains all test cases which had a performance change based on the configured type 1 error.
-        For your configured type 1 error of
-        <b>${it.config.statisticsConfig.type1error}</b>
-        (= ${(1-it.config.statisticsConfig.type1error)*100}% significance level) and
-        <b>${it.config.vms}</b>
-        VMs, the absolute t-value needs to be above the critical t-value
-        <b>${it.round(it.getCriticalTValue())}</b>
-        to indicate a performance change.
-        <br />
-        Selected values are available
-        <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution#Table_of_selected_values" target="parent">here</a>
-        .
-      </div>
-      <script>
-        jq$( "#dialogChanges" ).dialog({ autoOpen: false });
-      </script>
-
-      <p>Version: ${it.getConfig().getExecutionConfig().getVersion()}</p>
-
-      <j:forEach var="testcase" items="${it.getChanges().getTestcaseChanges().entrySet()}">
-        <h5>${%testcase}: ${testcase.getKey()}</h5>
-        <div class="changes-container">
-          <j:forEach var="methodChange" items="${testcase.getValue()}">
-            <div class="card">
-              <table class="data-table changes-table">
-                <tr>
-                  <td>Method</td>
-                  <td><a href="../${it.getReducedName(testcase.getKey())}_${methodChange.method}">${methodChange.method}</a></td>
-                </tr>
-                <tr>
-                  <td>Old time</td>
-                  <td>${it.round(methodChange.oldTime/1000)} $&#x00B5;s</td>
-                </tr>
-                <tr>
-                  <td>Change</td>
-                  <td><span>${methodChange.changePercent} %</span><br /><span>t = ${it.round(methodChange.tvalue)}</span></td>
-                </tr>
-              </table>
+            <a href="#" onClick="jq$('#configuration').toggle();">
+              ${%configuration} &#9660;
+            </a>
+            <div id="configuration" style="display: none">
+                <div>
+                    <p>${%configurationText}</p>
+                </div>
+                <table class="data-table configuration-table">
+                    <tr>
+                        <td>VMs</td>
+                        <td>${it.config.vms}</td>
+                    </tr>
+                    <tr>
+                        <td>${%iterations}</td>
+                        <td>${it.config.iterations}</td>
+                    </tr>
+                    <tr>
+                        <td>${%warmup}</td>
+                        <td>${it.config.warmup}</td>
+                    </tr>
+                    <tr>
+                        <td>${%repetitions}</td>
+                        <td>${it.config.repetitions}</td>
+                    </tr>
+                </table>
             </div>
-          </j:forEach>
-        </div>
-      </j:forEach>
 
-      <h2>
-        ${%measurements}
-        <a href='#' onClick='jq$( "#dialogMeasurements" ).dialog( "open" );'>
-          <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
-        </a>
-      </h2>
-      <div id="dialogMeasurements" title="${%measurements}">${%measurementsHint}</div>
-      <script>
-        jq$( "#dialogMeasurements" ).dialog({ autoOpen: false });
-      </script>
+            <j:if test="${it.hasUpdatedConfigurations()}">
+                ${AMP}
+                <a href='#' onClick='jq$( "#dialogUpdates" ).dialog( "open" );' style="font-size:24px; color: red;">
+                    <i class="fa fa-exclamation-triangle" title="Configuration has changed"></i>
+                </a>
+                <div id="dialogUpdates" title="${%updatedConfigurationTitle}">
+                  ${%changedConfigurationHint}
+                </div>
+                <script>
+                    jq$("#dialogUpdates").dialog({autoOpen: false});
+                </script>
+            </j:if>
 
-      <st:include page="measurements.jelly" it="${it}" optional="false" />
-      <script>
-        <j:forEach var="testcase" items="${it.measurements.entrySet()}">
-          var layout = {
-            barmode: "overlay",
-            title: {
-              text: "Histogramm"
-            },
-            xaxis: {
-              title: {
-                text: "Duration / ${testcase.getValue().getUnit()}"
-              }
-            },
-            yaxis: {
-              title: {
-                text: "Frequency"
-              }
-            },
-            height: 400
-          };
-          var version = {
-            x: ${testcase.getValue().valuesCurrentReadable},
-            type: "histogram",
-            name: "Version",
-            opacity: 0.5,
-            marker: {
-              color: 'green',
-            },
-          };
-          var predecessor = {
-            x: ${testcase.getValue().valuesBeforeReadable},
-            type: "histogram",
-            name: "Predecessor",
-            opacity: 0.6,
-            marker: {
-              color: 'red',
-            },
-          };
-          var data = [version, predecessor];
-          var config = {
-            responsive: true
-          };
-          Plotly.newPlot("histogramm_${testcase.getKey()}", data, layout, config);
-        </j:forEach>
-      </script>
-    </l:main-panel>
-  </l:layout>
+            <h2>
+                ${%changes}
+                <a href='#' onClick='jq$( "#dialogChanges" ).dialog( "open" );'>
+                    <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
+                </a>
+            </h2>
+            <div id="dialogChanges" title="Changes">
+                This section contains all test cases which had a performance change based on the configured type 1 error.
+                For your configured type 1 error of
+                <b>${it.config.statisticsConfig.type1error}</b>
+                (= ${(1-it.config.statisticsConfig.type1error)*100}% significance level) and
+                <b>${it.config.vms}</b>
+                VMs, the absolute t-value needs to be above the critical t-value
+                <b>${it.round(it.getCriticalTValue())}</b>
+                to indicate a performance change.
+                <br/>
+                Selected values are available
+                <a href="https://en.wikipedia.org/wiki/Student%27s_t-distribution#Table_of_selected_values" target="parent">here</a>
+                .
+            </div>
+            <script>
+                jq$("#dialogChanges").dialog({autoOpen: false});
+            </script>
+
+            <p>Version: ${it.getConfig().getExecutionConfig().getVersion()}</p>
+
+            <j:forEach var="testcase" items="${it.getChanges().getTestcaseChanges().entrySet()}">
+                <h5>${%testcase}: ${testcase.getKey()}</h5>
+                <div class="changes-container">
+                    <j:forEach var="methodChange" items="${testcase.getValue()}">
+                        <div class="card">
+                            <table class="data-table changes-table">
+                                <tr>
+                                    <td>Method</td>
+                                    <td>
+                                        <a href="../${it.getReducedName(testcase.getKey())}_${methodChange.method}">
+                                          ${methodChange.method}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Old time</td>
+                                    <td>
+                                      ${it.round(methodChange.oldTime/1000)} $&#x00B5;s
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Change</td>
+                                    <td>
+                                        <span>
+                                          ${methodChange.changePercent} %
+                                        </span>
+                                        <br/>
+                                        <span>
+                                          t = ${it.round(methodChange.tvalue)}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </j:forEach>
+                </div>
+            </j:forEach>
+
+            <h2>
+                ${%measurements}
+                <a href='#' onClick='jq$( "#dialogMeasurements" ).dialog( "open" );'>
+                    <i class="fa fa-question-circle" title='Display Help' style="font-size:24px"></i>
+                </a>
+            </h2>
+            <div id="dialogMeasurements" title="${%measurements}">
+              ${%measurementsHint}
+            </div>
+            <script>
+                jq$("#dialogMeasurements").dialog({autoOpen: false});
+            </script>
+
+            <st:include page="measurements.jelly" it="${it}" optional="false"/>
+            <script>
+                <j:forEach var="testcase" items="${it.measurements.entrySet()}">
+                    var layout = {
+                    barmode: "overlay",
+                    title: {
+                    text: "Histogramm"
+                    },
+                    xaxis: {
+                    title: {
+                    text: "Duration / ${testcase.getValue().getUnit()}"
+                    }
+                    },
+                    yaxis: {
+                    title: {
+                    text: "Frequency"
+                    }
+                    },
+                    height: 400
+                    };
+                    var version = {
+                    x: ${testcase.getValue().valuesCurrentReadable},
+                    type: "histogram",
+                    name: "Version",
+                    opacity: 0.5,
+                    marker: {
+                    color: 'green',
+                    },
+                    };
+                    var predecessor = {
+                    x: ${testcase.getValue().valuesBeforeReadable},
+                    type: "histogram",
+                    name: "Predecessor",
+                    opacity: 0.6,
+                    marker: {
+                    color: 'red',
+                    },
+                    };
+                    var data = [version, predecessor];
+                    var config = {
+                    responsive: true
+                    };
+                    Plotly.newPlot("histogramm_${testcase.getKey()}", data, layout, config);
+                </j:forEach>
+            </script>
+        </l:main-panel>
+    </l:layout>
 </j:jelly>
