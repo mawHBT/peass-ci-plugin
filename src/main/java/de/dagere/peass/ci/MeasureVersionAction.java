@@ -1,21 +1,21 @@
 package de.dagere.peass.ci;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.ci.helper.HistogramValues;
 import de.dagere.peass.ci.helper.RCAVisualizer;
+import de.dagere.peass.ci.helper.UnitConverter;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class MeasureVersionAction extends VisibleAction {
 
@@ -127,5 +127,13 @@ public class MeasureVersionAction extends VisibleAction {
 
    public double round(final double value) {
       return Math.round(value * 100) / 100d;
+   }
+
+   public int getFactorByMean(final double mean) {
+      return UnitConverter.getFactorByMean(mean);
+   }
+
+   public String getUnitByFactor(final int factor) {
+      return UnitConverter.getUnitByFactor(factor);
    }
 }
