@@ -134,6 +134,11 @@
       <st:include page="measurements.jelly" it="${it}" optional="false" />
       <script>
         <j:forEach var="testcase" items="${it.measurements.entrySet()}">
+
+          <j:set var="currentStatistic" value="${it.getTestcaseStatistic(testcase.getKey())}" />
+          <j:set var="factorOld" value="${it.getFactorByMean(currentStatistic.getMeanOld())}" />
+          <j:set var="unit" value="${it.getUnitByFactor(factorOld)}" />
+
           var layout = {
             barmode: "overlay",
             title: {
@@ -141,7 +146,8 @@
             },
             xaxis: {
               title: {
-                text: "Duration / ${testcase.getValue().getUnit()}"
+                <!--text: "Duration / ${testcase.getValue().getUnit()}"-->
+                text: "Duration / ${unit}"
               }
             },
             yaxis: {
