@@ -1,175 +1,241 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:x="jelly:xml">
-  <style>
-    .button-wrap {
-      justify-content: center;
-      display: flex;
-    }
-  </style>
+    <style>
+        .button-wrap {
+        justify-content: center;
+        display: flex;
+        }
+    </style>
 
-  <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js" />
+    <script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"/>
 
-  <j:forEach var="testcase" items="${it.measurements.entrySet()}">
-    <h5>
-      ${%testcase}:
-      <j:if test="${it.testIsChanged(testcase.getKey())}">
-        <a href="../${it.getReducedName(testcase.getKey().replace('#', '_'))}">${testcase.getKey()}</a>
-      </j:if>
-      <j:if test="${!it.testIsChanged(testcase.getKey())}">
-        ${testcase.getKey()}
-      </j:if>
-    </h5>
-    <div class="measurements-container">
-      <div class="card plot-card">
-        <div class="plot" id='histogramm_${testcase.getKey()}'></div>
-      </div>
-      <div class="card">
-        <table class="data-table measurement-table">
-          <j:set var="currentStatistic" value="${it.getTestcaseStatistic(testcase.getKey())}" />
-          <j:set var="noWarmupStatistic" value="${it.getNoWarmupStatistic(testcase.getKey())}" />
-          <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions != it.config.repetitions}">
-            <j:set var="currentRepetitions" value="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}" />
-          </j:if>
-          <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()) == null}">
-            <j:set var="currentRepetitions" value="${it.config.repetitions}" />
-          </j:if>
-          <j:set var="factorOld" value="${it.getFactorByMean(currentStatistic.getMeanOld())}" />
-          <j:set var="unit" value="${it.getUnitByFactor(factorOld)}" />
-          <tr>
-            <th></th>
-            <th colspan="2">
-              <span>${%warmupRemoved}</span>
-              <br />
-              <a href="#" onClick="jq$('.fullMeasurement').toggle(); window.dispatchEvent(new Event('resize'));">Volle Messung anzeigen/verbergen</a>
-            </th>
-            <th class="fullMeasurement" colspan="2" style="display: none">${%fullMeasurement}</th>
-          </tr>
-          <tr>
-            <th>Property</th>
-            <th>${%predecessorVersion}</th>
-            <th>${%currentVersion}</th>
-            <th class="fullMeasurement" style="display: none">${%predecessorVersion}</th>
-            <th class="fullMeasurement" style="display: none">${%currentVersion}</th>
-          </tr>
-          <tr>
-            <td>${%mean}<br />${%measured}</td>
-            <td>
-              ${it.round(currentStatistic.getMeanOld() / factorOld)} ${unit}
-            </td>
-            <td>
-              ${it.round(currentStatistic.getMeanCurrent() / factorOld)} ${unit}
-            </td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.getMeanOld()*currentRepetitions)} $&#x00B5;s</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.getMeanCurrent()*currentRepetitions)} $&#x00B5;s</td>
-          </tr>
-          <tr>
-            <td>${%standardDeviation}<br />${%measured}</td>
-            <td>
-              ${it.round(currentStatistic.deviationOld / factorOld)}
-            </td>
-            <td>
-              ${it.round(currentStatistic.deviationCurrent / factorOld)}
-            </td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.deviationOld*currentRepetitions)}</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.deviationCurrent*currentRepetitions)}</td>
-          </tr>
-          <tr>
-            <td>${%mean}<br />${%perRepetition}</td>
-            <td>${it.round(currentStatistic.getMeanOld() / currentRepetitions / factorOld)} ${unit}</td>
-            <td>${it.round(currentStatistic.getMeanCurrent() / currentRepetitions / factorOld)} ${unit}</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.getMeanOld())} $&#x00B5;s</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.getMeanCurrent())} $&#x00B5;s</td>
-          </tr>
-          <tr>
-            <td>${%standardDeviation}<br />${%perRepetition}</td>
-            <td>${it.round(currentStatistic.deviationOld / currentRepetitions / factorOld)}</td>
-            <td>${it.round(currentStatistic.deviationCurrent / currentRepetitions / factorOld)}</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.deviationOld)}</td>
-            <td class="fullMeasurement" style="display: none">${it.round(noWarmupStatistic.deviationCurrent)}</td>
-          </tr>
-          <tr>
-            <td>T-Wert</td>
-            <td colspan="2">
-              ${it.round(currentStatistic.tvalue)}
-              <span>(</span>
-              <j:if test="${it.abs(currentStatistic.tvalue) &gt; it.getCriticalTValue()}">${%significantChange} ${AMP} </j:if>
-              <j:if test="${it.abs(currentStatistic.tvalue) &lt; it.getCriticalTValue()}">${%noSignificantChange} ${AMP} </j:if>
-              <a href='#' onClick='jq$( "#dialogTValue" ).dialog( "open" );'>
-                <i class="fa fa-question-circle" title='${%helpTValueTitle}'></i>
-              </a>
-              <span>)</span>
-            </td>
-            <td class="fullMeasurement" colspan="2" style="display: none">${it.round(noWarmupStatistic.tvalue)}</td>
-          </tr>
-          <div id="dialogTValue" title="${%helpTValueTitle}">
-            ${%helpTValueStart}
-            <b>${it.config.statisticsConfig.type1error}</b>
-            (= ${(1-it.config.statisticsConfig.type1error)*100}%
-            ${%helpTValueSignificance}
-            <b>${it.config.vms}</b> VMs (Degrees of Freedom: <b>${it.getDegreesOfFreedom()}</b>)
-            ${%helpTValueMiddle}
-            <b>${it.round(it.getCriticalTValue())}</b>
-            ${%helpTValueEnd}
-          </div>
-          <script>
-            jq$( "#dialogTValue" ).dialog({ autoOpen: false });
-          </script>
-        </table>
-        <p>VMs: ${currentStatistic.getVMs()}</p>
-        <p class="button-wrap">
-          <a role="button" href="../measurement_${it.getReducedName(testcase.getKey().replace('#', '_'))}/?call=overall&amp;ess=-1" target="parent">
-            ${%inspectMeasurement}
-          </a>
-        </p>
-      </div>
-    </div>
+    <j:forEach var="testcase" items="${it.measurements.entrySet()}">
+        <h5>
+            ${%testcase}:
+            <j:if test="${it.testIsChanged(testcase.getKey())}">
+                <a href="../${it.getReducedName(testcase.getKey().replace('#', '_'))}">
+                    ${testcase.getKey()}
+                </a>
+            </j:if>
+            <j:if test="${!it.testIsChanged(testcase.getKey())}">
+                ${testcase.getKey()}
+            </j:if>
+        </h5>
+        <div class="measurements-container">
+            <div class="card plot-card">
+                <div class="plot" id='histogramm_${testcase.getKey()}'></div>
+            </div>
+            <div class="card">
+                <table class="data-table measurement-table">
+                    <j:set var="currentStatistic" value="${it.getTestcaseStatistic(testcase.getKey())}"/>
+                    <j:set var="noWarmupStatistic" value="${it.getNoWarmupStatistic(testcase.getKey())}"/>
+                    <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions != it.config.repetitions}">
+                        <j:set var="currentRepetitions" value="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}"/>
+                    </j:if>
+                    <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()) == null}">
+                        <j:set var="currentRepetitions" value="${it.config.repetitions}"/>
+                    </j:if>
+                    <j:set var="factorOld" value="${it.getFactorByMean(currentStatistic.getMeanOld())}"/>
+                    <j:set var="unit" value="${it.getUnitByFactor(factorOld)}"/>
+                    <tr>
+                        <th></th>
+                        <th colspan="2">
+                            <span>
+                                ${%warmupRemoved}
+                            </span>
+                            <br/>
+                            <a href="#" onClick="jq$('.fullMeasurement').toggle(); window.dispatchEvent(new Event('resize'));">
+                                Volle Messung anzeigen/verbergen
+                            </a>
+                        </th>
+                        <th class="fullMeasurement" colspan="2" style="display: none">
+                            ${%fullMeasurement}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            Property
+                        </th>
+                        <th>
+                            ${%predecessorVersion}
+                        </th>
+                        <th>
+                            ${%currentVersion}
+                        </th>
+                        <th class="fullMeasurement" style="display: none">
+                            ${%predecessorVersion}
+                        </th>
+                        <th class="fullMeasurement" style="display: none">
+                            ${%currentVersion}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            ${%mean}<br/>${%measured}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.getMeanOld() / factorOld)} ${unit}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.getMeanCurrent() / factorOld)} ${unit}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.getMeanOld() * currentRepetitions)} $&#x00B5;s
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.getMeanCurrent() * currentRepetitions)} $&#x00B5;s
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            ${%standardDeviation}<br/>${%measured}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.deviationOld / factorOld)}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.deviationCurrent / factorOld)}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.deviationOld * currentRepetitions)}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.deviationCurrent * currentRepetitions)}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            ${%mean}<br/>${%perRepetition}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.getMeanOld() / currentRepetitions / factorOld)} ${unit}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.getMeanCurrent() / currentRepetitions / factorOld)} ${unit}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.getMeanOld())} $&#x00B5;s
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.getMeanCurrent())} $&#x00B5;s
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            ${%standardDeviation}<br/>${%perRepetition}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.deviationOld / currentRepetitions / factorOld)}
+                        </td>
+                        <td>
+                            ${it.round(currentStatistic.deviationCurrent / currentRepetitions / factorOld)}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.deviationOld)}
+                        </td>
+                        <td class="fullMeasurement" style="display: none">
+                            ${it.round(noWarmupStatistic.deviationCurrent)}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            T-Wert
+                        </td>
+                        <td colspan="2">
+                            ${it.round(currentStatistic.tvalue)}
+                            <span>(</span>
+                            <j:if test="${it.abs(currentStatistic.tvalue) &gt; it.getCriticalTValue()}">
+                                ${%significantChange} ${AMP}
+                            </j:if>
+                            <j:if test="${it.abs(currentStatistic.tvalue) &lt; it.getCriticalTValue()}">
+                                ${%noSignificantChange} ${AMP}
+                            </j:if>
+                            <a href='#' onClick='jq$( "#dialogTValue" ).dialog( "open" );'>
+                                <i class="fa fa-question-circle" title='${%helpTValueTitle}'></i>
+                            </a>
+                            <span>)</span>
+                        </td>
+                        <td class="fullMeasurement" colspan="2" style="display: none">
+                            ${it.round(noWarmupStatistic.tvalue)}
+                        </td>
+                    </tr>
+                    <div id="dialogTValue" title="${%helpTValueTitle}">
+                        ${%helpTValueStart}
+                        <b>${it.config.statisticsConfig.type1error}</b>
+                        (= ${(1-it.config.statisticsConfig.type1error) * 100}%
+                        ${%helpTValueSignificance}
+                        <b>${it.config.vms}</b>
+                        VMs (Degrees of Freedom: <b>${it.getDegreesOfFreedom()}</b>)
+                        ${%helpTValueMiddle}
+                        <b>${it.round(it.getCriticalTValue())}</b>
+                        ${%helpTValueEnd}
+                    </div>
+                    <script>
+                        jq$("#dialogTValue").dialog({autoOpen: false});
+                    </script>
+                </table>
+                <p>VMs: ${currentStatistic.getVMs()}</p>
+                <p class="button-wrap">
+                    <a role="button" href="../measurement_${it.getReducedName(testcase.getKey().replace('#', '_'))}/?call=overall&amp;ess=-1" target="parent">
+                        ${%inspectMeasurement}
+                    </a>
+                </p>
+            </div>
+        </div>
 
-    <j:if test="${it.getUpdatedConfigurations().containsKey(testcase.getKey())}">
-      <div id="dialogUpdates${testcase.getKey().replace('#','_')}" title="Configuration Updates">
-        <i class="fa fa-exclamation-triangle" title="Configuration has changed" style="color: red"></i>
-        ${%changedConfigurationHint}
-        <table>
-          <tr>
-            <td>${%iterations}</td>
-            <td>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).iterations != it.config.iterations}">
-                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).iterations}
-                </b>
-              </j:if>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).iterations == it.config.iterations}">
-                ${it.getUpdatedConfigurations().get(testcase.getKey()).iterations}
-              </j:if>
-            </td>
-            <td>(Original: ${it.config.iterations})</td>
-          </tr>
-          <tr>
-            <td>${%warmup}</td>
-            <td>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).warmup != it.config.warmup}">
-                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).warmup}
-                </b>
-              </j:if>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).warmup == it.config.warmup}">
-                ${it.getUpdatedConfigurations().get(testcase.getKey()).warmup}
-              </j:if>
-            </td>
-            <td>(Original: ${it.config.warmup})</td>
-          </tr>
-          <tr>
-            <td>${%repetitions}</td>
-            <td>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions != it.config.repetitions}">
-                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}
-                </b>
-              </j:if>
-              <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions == it.config.repetitions}">
-                ${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}
-              </j:if>
-            </td>
-            <td>(Original: ${it.config.repetitions})</td>
-          </tr>
-        </table>
-      </div>
-    </j:if>
-  </j:forEach>
+        <j:if test="${it.getUpdatedConfigurations().containsKey(testcase.getKey())}">
+            <div id="dialogUpdates${testcase.getKey().replace('#','_')}" title="Configuration Updates">
+                <i class="fa fa-exclamation-triangle" title="Configuration has changed" style="color: red"></i>
+                ${%changedConfigurationHint}
+                <table>
+                    <tr>
+                        <td>
+                            ${%iterations}
+                        </td>
+                        <td>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).iterations != it.config.iterations}">
+                                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).iterations}</b>
+                            </j:if>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).iterations == it.config.iterations}">
+                                ${it.getUpdatedConfigurations().get(testcase.getKey()).iterations}
+                            </j:if>
+                        </td>
+                        <td>
+                            (Original: ${it.config.iterations})
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>${%warmup}</td>
+                        <td>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).warmup != it.config.warmup}">
+                                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).warmup}</b>
+                            </j:if>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).warmup == it.config.warmup}">
+                                ${it.getUpdatedConfigurations().get(testcase.getKey()).warmup}
+                            </j:if>
+                        </td>
+                        <td>
+                            (Original: ${it.config.warmup})
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            ${%repetitions}
+                        </td>
+                        <td>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions != it.config.repetitions}">
+                                <b>${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}</b>
+                            </j:if>
+                            <j:if test="${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions == it.config.repetitions}">
+                                ${it.getUpdatedConfigurations().get(testcase.getKey()).repetitions}
+                            </j:if>
+                        </td>
+                        <td>
+                            (Original: ${it.config.repetitions})
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </j:if>
+    </j:forEach>
 </j:jelly>
