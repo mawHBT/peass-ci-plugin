@@ -118,7 +118,7 @@ public class MeasureVersionBuilder extends Builder implements SimpleBuildStep, S
    private String excludes = "";
    private String includeByRule = "";
    private String excludeByRule = "";
-   private String properties = "";
+   private String[] properties = new String[0];
    private String testGoal = "test";
    private String pl = "";
 
@@ -656,11 +656,11 @@ public class MeasureVersionBuilder extends Builder implements SimpleBuildStep, S
    }
 
    @DataBoundSetter
-   public void setProperties(final String properties) {
+   public void setProperties(final String[] properties) {
       this.properties = properties;
    }
 
-   public String getProperties() {
+   public String[] getProperties() {
       return properties;
    }
 
