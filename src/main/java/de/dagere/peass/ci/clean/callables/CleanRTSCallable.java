@@ -35,8 +35,7 @@ public class CleanRTSCallable implements FileCallable<Boolean> {
          File folder = new File(potentialSlaveWorkspace.getParentFile(), projectName + PeassFolders.PEASS_FULL_POSTFIX);
          ResultsFolders resultsFolders = new ResultsFolders(folder, projectName);
 
-         deleteResultFiles(resultsFolders);
-         deleteLogFolders(resultsFolders);
+         cleanFolder(resultsFolders);
 
          return true;
       } catch (IOException e) {
