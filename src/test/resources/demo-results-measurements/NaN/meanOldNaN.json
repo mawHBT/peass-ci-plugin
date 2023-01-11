@@ -1,0 +1,142 @@
+{
+  "measurementConfig" : {
+    "vms" : 8,
+    "earlyStop" : false,
+    "warmup" : 10,
+    "iterations" : 10,
+    "repetitions" : 10,
+    "logFullData" : true,
+    "useGC" : false,
+    "callSyncBetweenVMs" : true,
+    "waitTimeBetweenVMs" : 1000,
+    "maxLogSizeInMb" : 100,
+    "kiekerConfig" : {
+      "useKieker" : true,
+      "useSourceInstrumentation" : true,
+      "useSelectiveInstrumentation" : true,
+      "useAggregation" : true,
+      "useCircularQueue" : true,
+      "enableAdaptiveMonitoring" : false,
+      "adaptiveInstrumentation" : false,
+      "kiekerAggregationInterval" : 5000,
+      "record" : "DURATION",
+      "onlyOneCallRecording" : false,
+      "extractMethod" : false,
+      "traceSizeInMb" : 100,
+      "kiekerQueueSize" : 10000000,
+      "createDefaultConstructor" : false,
+      "kiekerWaitTime" : 10,
+      "excludeForTracing" : [ "new org.eclipse.jetty.logging.JettyLevel.<init>(..)", "* org.eclipse.jetty.logging.JettyLevel.*(..)", "*[] org.eclipse.jetty.logging.JettyLevel.*(..)", "*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLevel.*(..)", "new org.eclipse.jetty.logging.JettyLoggerConfiguration.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggerConfiguration.*(..)", "new org.eclipse.jetty.logging.JettyLoggingServiceProvider.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggingServiceProvider.*(..)", "new org.eclipse.jetty.logging.JettyLoggerFactory.<init>(..)", "* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*[] org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLoggerFactory.*(..)", "new org.eclipse.jetty.logging.StdErrAppender.<init>(..)", "* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*[] org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.StdErrAppender.*(..)", "new org.eclipse.jetty.logging.Timestamp.<init>(..)", "* org.eclipse.jetty.logging.Timestamp.*(..)", "*[] org.eclipse.jetty.logging.Timestamp.*(..)", "*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.Timestamp.*(..)", "new org.eclipse.jetty.logging.Timestamp$Tick.<init>(..)", "* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*[] org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.Timestamp$Tick.*(..)", "new org.eclipse.jetty.logging.JettyLogger.<init>(..)", "* org.eclipse.jetty.logging.JettyLogger.*(..)", "*[] org.eclipse.jetty.logging.JettyLogger.*(..)", "*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)", "*.*.*.*.* org.eclipse.jetty.logging.JettyLogger.*(..)" ]
+    },
+    "saveAll" : true,
+    "javaVersion" : "17.0.2",
+    "measurementStrategy" : "SEQUENTIAL",
+    "statisticsConfig" : {
+      "type1error" : 0.01,
+      "type2error" : 0.01,
+      "outlierFactor" : 3.29,
+      "statisticTest" : "T_TEST"
+    },
+    "executionConfig" : {
+      "includes" : [ "de.hbt.geofox.tariff.peassTest.ExampleTest#test" ],
+      "testGoal" : "test",
+      "timeout" : 1200000,
+      "cleanGoal" : "cleanTest",
+      "redirectSubprocessOutputToFile" : true,
+      "useTieredCompilation" : false,
+      "removeSnapshots" : false,
+      "useAlternativeBuildfile" : false,
+      "excludeLog4jSlf4jImpl" : false,
+      "excludeLog4jToSlf4j" : false,
+      "executeBeforeClassInMeasurement" : false,
+      "clearMockitoCaches" : false,
+      "onlyMeasureWorkload" : false,
+      "showStart" : false,
+      "redirectToNull" : true,
+      "createDetailDebugFiles" : true
+    },
+    "fixedCommitConfig" : {
+      "commit" : "eea62902c1839d3f00b76587365450f019841ec4",
+      "commitOld" : "425c929ea1c02a03d6d0d029994fe537ce3cacf4"
+    }
+  },
+  "causeConfig" : {
+    "splitAggregated" : true,
+    "minTime" : 0.01,
+    "ignoreEOIs" : true,
+    "rcaStrategy" : "UNTIL_SOURCE_CHANGE",
+    "levels" : 1,
+    "testCase" : {
+      "clazz" : "de.hbt.geofox.tariff.peassTest.ExampleTest",
+      "method" : "test",
+      "module" : "module-server",
+      "params" : null
+    },
+    "propertyFolder" : "/home/maw/.jenkins/workspace/tariff-exampleTest/tariff-exampleTest/../tariff-exampleTest_fullPeass/properties_tariff-exampleTest"
+  },
+  "nodes" : {
+    "call" : "de.hbt.geofox.tariff.peassTest.ExampleTest#test",
+    "kiekerPattern" : "public void de.hbt.geofox.tariff.peassTest.ExampleTest.test()",
+    "otherKiekerPattern" : "public void de.hbt.geofox.tariff.peassTest.ExampleTest.test()",
+    "module" : "module-server",
+    "statistic" : {
+      "meanOld" : 2.474714564375E7,
+      "meanCurrent" : 1.967437855125E8,
+      "deviationOld" : 845163.2656547499,
+      "deviationCurrent" : 420095.51588233345,
+      "vms" : 8,
+      "callsOld" : 80,
+      "calls" : 80,
+      "tvalue" : -515.4415658582456
+    },
+    "childs" : [ {
+      "call" : "de.hbt.geofox.tariff.peassTest.ExampleClazz#calleeMethod",
+      "kiekerPattern" : "protected void de.hbt.geofox.tariff.peassTest.ExampleClazz.calleeMethod()",
+      "otherKiekerPattern" : "protected void de.hbt.geofox.tariff.peassTest.ExampleClazz.calleeMethod()",
+      "module" : "module-server",
+      "statistic" : {
+        "meanOld" : 2.43677209E7,
+        "meanCurrent" : 1.96404912825E8,
+        "deviationOld" : 682597.6830244738,
+        "deviationCurrent" : 385125.22150793875,
+        "vms" : 8,
+        "callsOld" : 80,
+        "calls" : 80,
+        "tvalue" : -620.8559617077286
+      },
+      "childs" : [ {
+        "call" : "de.hbt.geofox.tariff.peassTest.Callee#method1",
+        "kiekerPattern" : "protected void de.hbt.geofox.tariff.peassTest.Callee.method1()",
+        "otherKiekerPattern" : "protected void de.hbt.geofox.tariff.peassTest.Callee.method1()",
+        "module" : "module-server",
+        "statistic" : {
+          "meanOld" : 2.4306350131249998E7,
+          "meanCurrent" : 1.9634129382500002E8,
+          "deviationOld" : 689091.2351670391,
+          "deviationCurrent" : 378614.94838270184,
+          "vms" : 8,
+          "callsOld" : 80,
+          "calls" : 80,
+          "tvalue" : -618.8687657921699
+        },
+        "childs" : [ {
+          "call" : "de.hbt.geofox.tariff.peassTest.Callee#innerMethod",
+          "kiekerPattern" : "private void de.hbt.geofox.tariff.peassTest.Callee.innerMethod()",
+          "otherKiekerPattern" : "private void de.hbt.geofox.tariff.peassTest.Callee.innerMethod()",
+          "module" : "module-server",
+          "statistic" : {
+            "meanOld" : NaN,
+            "meanCurrent" : 1.962515154125E8,
+            "deviationOld" : 684702.9561641527,
+            "deviationCurrent" : 384186.01811430644,
+            "vms" : 8,
+            "callsOld" : 80,
+            "calls" : 80,
+            "tvalue" : -619.6476200296796
+          },
+          "childs" : [ ]
+        } ]
+      } ]
+    } ]
+  }
+}
